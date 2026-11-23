@@ -175,7 +175,9 @@ function gerar(seed, porTrader){
 const TRADER_PCT = [118,124,109,131,103,97,115];
 const DADOS = {
   trader: TRADERS.map((t,i) => [titulo(t), i, TRADER_PCT[i]]),
-  coord:  gerar(5, 2),
+  // Coordenadores (nomes reais; % de exemplo). Trader = -1 (não informado)
+  coord:  ["DAIANE PRATES GEHLEN","JULIANO MARTINS ANDROCHESKI","MARILEI DOMINGUES DE SOUZA","MICHAEL LEONARDO OLIVEIRA","CLAILTON DUARTE DA SILVA","ALAN MARTINS BASTOS","THAMYRES DE LIMA ALVES","WELDSON ALBANO SILVA","BRENDA DE SOUZA DANTAS","HUGO RONAN LOPES AMARO","THIAGO DIAS DE CARVALHO","VIVIAN DE ARAUJO VIANA"]
+          .map((n,i) => [titulo(n), -1, [126,112,138,97,119,104,131,88,115,142,101,109][i]]),
   merch:  gerar(9, 6),
   sup:    gerar(13, 8),
   mx:     gerar(17, 70),
@@ -241,7 +243,7 @@ function porTrader(f){
 function rowHtml(x, pos, hit, prem, showTr){
   const w = Math.min(x[2],150)/150*100;
   return `<div class="row${hit?' hit':''}${prem?' prem':''}"><span class="ps">${pos}º</span>
-    <span><span class="nm">${esc(x[0])}${prem?'<span class="win">PRÊMIO MASTER</span>':''}${x[2] >= 100 ? VTAG : ''}</span>${showTr?`<span class="rg">Trader ${esc(trNome(x[1]))}</span>`:''}</span>
+    <span><span class="nm">${esc(x[0])}${prem?'<span class="win">PRÊMIO MASTER</span>':''}${x[2] >= 100 ? VTAG : ''}</span>${showTr && x[1] >= 0 ?`<span class="rg">Trader ${esc(trNome(x[1]))}</span>`:''}</span>
     <span class="res"><span class="pc" style="color:${color(x[2])}">${fmt(x[2])}</span>
     <span class="bar"><i style="width:${w.toFixed(0)}%;background:${color(x[2])}"></i></span></span></div>`;
 }
@@ -252,7 +254,7 @@ function lista(f, ti){
   const n = Math.min(f.premiados, s.length);
   const showTr = brasil && f.id !== 'trader';
   const back = brasil ? `<a class="back" href="#">← Início</a>` : `<a class="back" href="#${f.id}">← ${f.nome}</a>`;
-  const card = (i, cls) => `<div class="p ${cls}"><div class="pos">${i+1}º</div><div class="n">${esc(s[i][0])}</div>${showTr?`<div class="r">${esc(trNome(s[i][1]))}</div>`:''}<div class="v">${fmt(s[i][2])}<small>de atingimento</small></div><span class="win" style="margin:6px 0 0">PRÊMIO MASTER</span>${s[i][2] >= 100 ? '<div style="margin-top:6px">' + VTAG + '</div>' : ''}</div>`;
+  const card = (i, cls) => `<div class="p ${cls}"><div class="pos">${i+1}º</div><div class="n">${esc(s[i][0])}</div>${showTr && s[i][1] >= 0 ?`<div class="r">${esc(trNome(s[i][1]))}</div>`:''}<div class="v">${fmt(s[i][2])}<small>de atingimento</small></div><span class="win" style="margin:6px 0 0">PRÊMIO MASTER</span>${s[i][2] >= 100 ? '<div style="margin-top:6px">' + VTAG + '</div>' : ''}</div>`;
   const pod = n === 2 ? `<div class="podium two">${card(0,'g')}${card(1,'s')}</div>` : `<div class="podium one">${card(0,'g')}</div>`;
   app.innerHTML = `${back}
     <div class="rhead">${SMALLHEAD}<h2>${f.nome}</h2>
