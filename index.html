@@ -573,7 +573,7 @@ function muralPage(){
 
 // ===================== MURAL (comentários) =====================
 // MURAL_DEMO = true mostra mensagens de exemplo junto com as reais (para ver como fica). Troque para false antes de divulgar.
-const MURAL_DEMO = true;
+const MURAL_DEMO = false;
 const MURAL_EX = [
   { n:"Ana Paula", r:"Sul", m:"💀 Caveiraaaa, só sai Samsung!", t:Date.now()-4e5 },
   { n:"João Silva", r:"SP", m:"Bora time! Hoje o Galaxy não fica na prateleira 📱🔥", t:Date.now()-14e5 },
@@ -593,7 +593,7 @@ function MURAL_HTML(){
       <div class="mou">ou escreva sua frase de competição</div>
       <textarea name="m" maxlength="100" rows="2" placeholder="Sua frase..." aria-label="Sua frase"></textarea>
       <div class="mrow"><input name="n" maxlength="20" placeholder="Seu nome" aria-label="Seu nome"><input name="r" maxlength="15" placeholder="Região" aria-label="Sua região"></div>
-      <button type="submit" class="send">Enviar 🚀</button>
+      <button type="submit" class="send">Enviar</button>
       <div class="mmsg" role="status"></div>
     </form>
     <div class="mlist"></div></div>`;
@@ -613,8 +613,7 @@ function drawMural(items){
   const el = document.querySelector('#mural .mlist'); if (!el) return;
   const cor = t => { let h = 0; for (const ch of String(t)) h = (h * 31 + ch.charCodeAt(0)) % 360; return `hsl(${h} 70% 72%)`; };
   const ini = t => String(t || '?').trim().split(/\s+/).slice(0, 2).map(w => w[0] || '').join('').toUpperCase();
-  el.innerHTML = `<div class="ghead"><span class="gav">📣</span><span><b>Galera da Black Friday</b><small><i class="on"></i>${18 + items.length * 3} online · ${items.length} mensagens</small></span></div>`
-    + `<div class="mc typing"><span class="av">✍️</span><div class="bub"><span class="dots"><i></i><i></i><i></i></span><small>alguém está digitando</small></div></div>`
+  el.innerHTML = `<div class="ghead"><span class="gav">🖤</span><span><b>Galera da Black Friday</b><small><i class="on"></i>${items.length} ${items.length === 1 ? 'mensagem' : 'mensagens'}</small></span></div>`
     + (items.length ? items.slice(0, 40).map((c, k) => {
       const nm = esc(c.n || 'Galera'), c1 = cor(c.n || c.r);
       return `<div class="mc${c.novo ? ' new' : ''}" style="animation-delay:${Math.min(k, 8) * 60}ms"><span class="av" style="background:${c1}">${esc(ini(c.n))}</span><div class="col"><div class="bub"><div class="mh"><b style="color:${c1}">${nm}</b>${c.r ? `<i>${esc(c.r)}</i>` : ''}<span class="tm">${quando(c.t)}</span></div><div class="mt">${esc(c.m)}</div></div><div class="reac">${REACS.map((e,q) => { const ch = chaveMsg(c), on = minhasReac[ch + ':' + q]; const nq = c.id ? +((c.rc || [])[q] || 0) : 1 + (hashN(c.m + c.n + q) % 9) + (on ? 1 : 0);
