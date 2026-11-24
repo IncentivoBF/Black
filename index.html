@@ -359,7 +359,7 @@ body{min-height:100vh;color:var(--fg);font-family:var(--font);font-size:16px;lin
 const ATUALIZADO = "23/11/2026";
 // ===================== MURAL =====================
 // Cole aqui o link do "App da Web" do Google Apps Script (planilha do mural). Vazio = só prévia.
-const MURAL_URL = "";
+const MURAL_URL = "https://script.google.com/macros/s/AKfycbxGyd0VD_CdDHymfYwuAHMpVUGfjUG1pw3dHi78Lk6B4mhPd4dFrfM99XuUwoND-pF0/exec";
 const FRASES = ["💀 Caveiraaaa, só sai Samsung!", "🎟 Meu voucher é garantido!", "🚀 Segura que eu tô chegando!", "✈ Essa viagem é minha!", "🏆 Vim buscar meu prêmio!", "💸 Não me chama, tô vendendo!", "🧳 Mala pronta, só falta embarcar!", "🥇 Rumo ao topo do ranking!"];
 // ===================== COMO FUNCIONA A CAMPANHA =====================
 // Etapa 1 (voucher R$ 1.000): cumprir os 4 critérios (vendas 100% da meta dos produtos foco,
@@ -480,6 +480,7 @@ const MURAL_EX = [
   { r:"Norte", m:FRASES[2], t:Date.now()-90e5 },
   { r:"CO", m:FRASES[6], t:Date.now()-126e5 },
 ];
+let muralEnv = [];
 let muralLocal = (() => { try { return JSON.parse(localStorage.getItem('mural_meus') || '[]'); } catch (_) { return []; } })(), muralTimer = null;
 function MURAL_HTML(){
   return `<div class="sec mural" id="mural"><div class="mtitle"><span class="mbig">📣</span><div>MURAL DA <b>GALERA</b></div></div>
@@ -503,15 +504,16 @@ function drawMural(items){
   const el = document.querySelector('#mural .mlist'); if (!el) return;
   el.innerHTML = items.length ? items.slice(0, 40).map((c, k) => { const i = c.m.indexOf(' '); const em = i > 0 ? c.m.slice(0, i) : '💬', tx = i > 0 ? c.m.slice(i + 1) : c.m;
       return `<div class="mc${c.pend ? ' new' : ''}" style="animation-delay:${Math.min(k, 8) * 70}ms"><span class="me">${esc(em)}</span><div><div class="mh"><b>${esc(c.r)}</b><span>${quando(c.t)}</span></div><div class="mt">${esc(tx)}</div></div></div>`; }).join('')
-    : '<div class="empty">Seja o primeiro a comentar!</div>';
+    : '<div class="empty">Seja o primeiro a soltar o grito! 📣</div>';
 }
 async function loadMural(){
   if (!MURAL_URL) { drawMural([...muralLocal, ...MURAL_EX]); return; }
   try {
     const r = await fetch(MURAL_URL + '?t=' + Date.now());
-    const d = await r.json();
-    drawMural([...muralLocal.filter(x => x.pend), ...d.map(x => ({ r:x.r, m:x.m, t:new Date(x.t).getTime() }))]);
-  } catch (_) { drawMural([...muralLocal]); }
+    const d = (await r.json()).map(x => ({ r:x.r, m:x.m, t:new Date(x.t).getTime() }));
+    muralEnv = muralEnv.filter(x => !d.some(y => y.r === x.r && y.m === x.m && Math.abs(y.t - x.t) < 5 * 60000));
+    drawMural([...muralEnv, ...d]);
+  } catch (_) { drawMural([...muralEnv]); }
 }
 function initMural(){
   const form = document.querySelector('#mural form'); if (!form) return;
@@ -528,8 +530,8 @@ function initMural(){
     const novo = { ...c, t: Date.now(), pend: true };
     try {
       if (MURAL_URL) {
-        await fetch(MURAL_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(c) });
-        muralLocal = []; msg.textContent = 'Recado enviado! 🚀';
+        await fetch(MURAL_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(c) });
+        muralEnv.unshift(novo); msg.textContent = 'Recado enviado! 🚀';
       } else { muralLocal.unshift(novo); msg.textContent = 'Recado enviado! 🚀'; try { localStorage.setItem('mural_meus', JSON.stringify(muralLocal.slice(0,10))); } catch (_) {} }
       form.m.value = ''; chips.forEach(x => x.setAttribute('aria-pressed', 'false'));
     } catch (_) { msg.textContent = 'Não foi possível enviar. Tente de novo.'; }
