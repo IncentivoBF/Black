@@ -389,7 +389,8 @@ body{min-height:100vh;color:var(--fg);font-family:var(--font);font-size:16px;lin
 .mural .mform .chip{background:rgba(255,255,255,.05);border-color:rgba(255,210,31,.3)}
 .mural .mform input,.mural .mform textarea{border-color:rgba(255,255,255,.18)}
 .mural .mlist{background:linear-gradient(165deg,rgba(255,210,31,.08),rgba(22,12,50,.9) 35%);border:1.5px solid rgba(255,210,31,.6);box-shadow:0 0 12px rgba(255,200,0,.18)}
-.mural .ghead{background:linear-gradient(90deg,rgba(255,210,31,.2),rgba(255,180,0,.08));border-bottom:1px solid rgba(255,210,31,.25)}
+.mural .ghead{background:linear-gradient(90deg,rgba(255,210,31,.2),rgba(255,180,0,.08)),#1c1238;border-bottom:1px solid rgba(255,210,31,.25);z-index:3}
+.mural .mlist{max-height:max(560px,78vh)}
 .mural .ghead b{color:#ffe58a}
 .mural .rc.on{background:rgba(255,210,31,.22);border-color:rgba(255,210,31,.7)}
 .mural .mc.new .bub{background:rgba(255,210,31,.2)}
@@ -535,7 +536,7 @@ function cover(){
       ${isT ? `<img src="${TROFEU}" alt="Troféu Caveira de Ouro">` : `<span class="medal">${lid ? '–' : '1º'}</span>`}
       <span><span class="fn">${f.nome.toUpperCase()}</span>
       ${f.breve ? `<span class="nm" style="display:block">Resultado em breve</span><span class="tx" style="display:block">⏳ Em apuração</span>` : `<span class="nm" style="display:block">${esc(w[0])}${UFT(w)}</span>
-      <span class="tx" style="display:block">${f.meta ? `<span class="gv">Vendas Upsell ${pc(w[4])}%</span>` : `<b>${fmt(w[2])}</b> de crescimento<span class="gv2${lid ? ' low' : ''}">Ating. Vendas ${pc(w[4])}%</span>${lid ? `<span class="lid">⚠️ Ninguém bateu 100%</span>` : ''}`}</span>`}</span>
+      <span class="tx" style="display:block">${f.meta ? `<span class="gv">Vendas Upsell ${pc(w[4])}%</span>` : `<b>${fmt(w[2])}</b> de crescimento<span class="gv2${lid ? ' low' : ''}">Ating. Vendas ${pc(w[4])}%</span>${lid ? `<span class="lid">⚠️ Meta não atingida.</span>` : ''}`}</span>`}</span>
       <span class="go">›</span></a>`;
   }).join('');
   const outros = FUNCOES.filter(f => f.escopo === 'trader').map(f => `<a class="cat" href="#${f.id}">
@@ -720,7 +721,7 @@ function lista(f, ti){
     <div class="rhead">${SMALLHEAD}<h2>${f.nome}</h2>
     <div class="crumb">${brasil ? 'Ranking Brasil · o 1º leva o Prêmio Master' : `Trader <b>${esc(trNome(ti))}</b> · ${txtN(n) } ${n === 1 ? 'leva' : 'levam'} o Prêmio Master`}</div>
     <p class="sub" style="margin-top:6px">${base.length} participantes · ${el.length} ${SEMV ? (el.length === 1 ? 'elegível' : 'elegíveis') : 'garantindo parcialmente o voucher'}</p>${SEMV ? '' : `<p class="vleg">${VTAG} = Voucher de R$ 1.000</p>`}</div>
-    ${NENHUM ? `<div class="aviso"><span class="ai">⚠️</span><span><b>Ninguém atingiu 100% de vendas</b>Para estar elegível é preciso bater no mínimo 100% de atingimento de vendas em ${['ses','merch'].includes(f.id) ? 'MX' : 'MX e VD'}.</span></div>` : ''}
+    ${NENHUM ? `<div class="aviso"><span class="ai">⚠️</span><span><b>Nenhum elegível até o momento</b>Para estar elegível é preciso bater no mínimo 100% de atingimento de vendas em ${['ses','merch'].includes(f.id) ? 'MX' : 'MX e VD'}.</span></div>` : ''}
     ${pod}
     <div class="search"><label for="busca">Encontre seu nome</label>
       <input id="busca" type="search" placeholder="Digite seu nome..." autocomplete="off">
